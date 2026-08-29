@@ -1,24 +1,29 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import sequelize, { testConnection } from './config/database.js';
-import './models/Usuario.js'; // Importamos el modelo para que Sequelize lo reconozca
+import './models/Usuario.js';
+import usuarioRoutes from './routes/usuarioRoutes.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware para permitir que Express entienda el formato JSON en el body
 app.use(express.json());
 
-// Probar conexión y sincronizar tablas
+// Registro de las rutas modulares de usuarios
+app.use('/api/usuarios', usuarioRoutes);
+
+// Inicializacion asincrona del servidor y base de datos
 const initApp = async () => {
   await testConnection();
   try {
-    // alter: true actualiza la tabla en la base de datos si haces cambios en el modelo
+    // Sincroniza el modelo con la base de datos de Docker
     await sequelize.sync({ alter: true });
-    console.log(' Tablas sincronizadas correctamente en la base de datos.');
+    console.log('Tablas sincronizadas correctamente en la base de datos.');
   } catch (error) {
-    console.error(' Error al sincronizar las tablas:', error);
+    console.error('Error al sincronizar las tablas:', error);
   }
 };
 
@@ -29,7 +34,7 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`⚡ Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
 export default app;
