@@ -1,8 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
+import { v4 as uuidv4 } from 'uuid'; // Importamos la funcion para generar UUID version 4
 import sequelize from '../config/database.js';
 
 export class Usuario extends Model {
-  public id!: number;
+  public id!: string; // Cambiado de number a string para soportar el formato UUID
   public nombre!: string;
   public correo!: string;
   public contrasena!: string;
@@ -13,8 +14,8 @@ export class Usuario extends Model {
 Usuario.init(
   {
     id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID, // Definimos el tipo de dato como UUID nativo
+      defaultValue: () => uuidv4(), // Asignamos la generacion automatica al crear un registro
       primaryKey: true,
     },
     nombre: {
@@ -24,7 +25,7 @@ Usuario.init(
     correo: {
       type: DataTypes.STRING(150),
       allowNull: false,
-      unique: true, // Regla: El correo electrónico no puede estar repetido
+      unique: true, // Regla: El correo electronico no puede estar repetido
       validate: {
         isEmail: true,
       },
@@ -37,7 +38,7 @@ Usuario.init(
       type: DataTypes.STRING(50),
       allowNull: false,
       validate: {
-        isIn: [['Administrador', 'Gestor']], // Roles disponibles
+        isIn: [['Administrador', 'Gestor']], // Roles disponibles del sistema
       },
     },
     estado: {
@@ -45,14 +46,14 @@ Usuario.init(
       allowNull: false,
       defaultValue: 'Activo',
       validate: {
-        isIn: [['Activo', 'Inactivo']], // Borrado lógico (Regla 13)
+        isIn: [['Activo', 'Inactivo']], // Manejo de borrado logico
       },
     },
   },
   {
     sequelize,
     tableName: 'usuarios',
-    timestamps: false, // Alineado al diseño inicial del script
+    timestamps: false,
   }
 );
 
