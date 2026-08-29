@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17
+    container_name: autoparts_container
+    restart: always
+    environment:
+      POSTGRES_USER: luis
+      POSTGRES_PASSWORD: luis123
+      POSTGRES_DB: autoparts_supply_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_autoparts_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_autoparts_data:
